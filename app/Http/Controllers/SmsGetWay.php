@@ -29,7 +29,7 @@ class SmsGetWay extends Controller
                 'username'      => config('services.sms.username'),
                 'password'      => config('services.sms.password'),
                 'apicode'       => "5",
-                'msisdn'        => [config('services.sms.msisdn')],
+                'msisdn'        => config('services.sms.msisdn'),
                 'countrycode'   => '880',
                 'cli'           => config('services.sms.sender_id'),
                 'messagetype'   => '1',

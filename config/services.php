@@ -27,7 +27,7 @@ return [
         'username'  => env('SMS_USERNAME'),
         'password'  => env('SMS_PASSWORD'),
         'sender_id' => env('SMS_SENDER_ID'),
-        'msisdn'    => env('SMS_MSISDN'),
+        'msisdn'    => array_filter(array_map('trim', explode(',', env('SMS_MSISDN', '')))),
     ],
 
 ];
