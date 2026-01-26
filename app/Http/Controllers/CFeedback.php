@@ -33,25 +33,25 @@ class CFeedback extends Controller
                 'satisfaction_level' => $satisfaction
             ]));
 
-            $map = [
-                4 => 'Excellent', 
-                3 => 'Good', 
-                2 => 'Fair', 
-                1 => 'Poor'
-            ];
+$map = [
+    4 => 'Best', 
+    3 => 'Good', 
+    2 => 'Fair', 
+    1 => 'Poor'
+];
 
-            $sms = "BIAM Feedback:Room:{$feedback->room_number},{$feedback->name},{$feedback->designation},".
-                     "Desk:".$map[$feedback->rating_front_desk_service].",".
-                     "Food:".$map[$feedback->rating_canteen_food].",".
-                     "Staff:".$map[$feedback->rating_canteen_staff_service].",".
-                    "Room Boys:".$map[$feedback->rating_room_boys_service].",".
-                    "Cleanliness:".$map[$feedback->rating_cleanliness_of_room].",".
-                     "W/AC/F:".$map[$feedback->rating_washroom_ac_lights_fan];
+$sms = "BIAM FEEDBACK: Room:{$feedback->room_number}, {$feedback->name}, {$feedback->designation} " .
+       "F.Desk:" . $map[$feedback->rating_front_desk_service] . ", " .
+       "Food:" . $map[$feedback->rating_canteen_food] . ", " .
+       "Staff:" . $map[$feedback->rating_canteen_staff_service] . ", " .
+       "RoomBoy:" . $map[$feedback->rating_room_boys_service] . ", " .
+       "Cleanliness:" . $map[$feedback->rating_cleanliness_of_room] . ", " .
+       "AC\Fan\Light:" . $map[$feedback->rating_washroom_ac_lights_fan];
 
             
-             //Log::info($sms);
-              $CSms = new SmsGetWay();
-              $CSms->SendSMS($feedback, $sms);
+             Log::info($sms);
+              //$CSms = new SmsGetWay();
+              //$CSms->SendSMS($feedback, $sms);
             
             return response()->json([
                 'message' => 'Feedback submitted successfully',
