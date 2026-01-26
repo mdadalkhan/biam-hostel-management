@@ -49,9 +49,9 @@ $sms = "BIAM FEEDBACK: Room:{$feedback->room_number}, {$feedback->name}, {$feedb
        "AC\Fan\Light:" . $map[$feedback->rating_washroom_ac_lights_fan];
 
             
-             Log::info($sms);
-              //$CSms = new SmsGetWay();
-              //$CSms->SendSMS($feedback, $sms);
+             //Log::info($sms);
+              $CSms = new SmsGetWay();
+              $CSms->SendSMS($feedback, $sms);
             
             return response()->json([
                 'message' => 'Feedback submitted successfully',
