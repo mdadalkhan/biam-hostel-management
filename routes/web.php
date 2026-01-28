@@ -11,18 +11,21 @@ use App\Http\Controllers\CFeedback;
 use App\Http\Controllers\CAuth;
 use App\Http\Controllers\SmsGetWay;
 use App\Http\Controllers\CAdminDashboard;
+use App\Providers\AppServiceProvider;
 
  
-Route::get('/',               [CAuth::class,    'feedback'])->name('welcome');
-Route::get('/login',          [CAuth::class,    'viewLogin'])->name('login');
-Route::post('/login',         [CAuth::class,    'login'])->name('login.submit');
-Route::post('/logout',        [CAuth::class,    'logout'])->name('logout');
-Route::post('/send-feedback', [CFeedback::class,'storeFeedback'])->name('sendfeedback');
+Route::middleware(['throttle:public'])->group(function(){
+    Route::get('/',               [CAuth::class,    'feedback'])->name('welcome');
+    Route::get('/login',          [CAuth::class,    'viewLogin'])->name('login');
+    Route::post('/login',         [CAuth::class,    'login'])->name('login.submit');
+    Route::post('/logout',        [CAuth::class,    'logout'])->name('logout');
+    Route::post('/send-feedback', [CFeedback::class,'storeFeedback'])->name('sendfeedback');
+});
 
 
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','throttle:global'])->group(function () {
     /**
      * Authenticated routes for admin
      * */

@@ -14,6 +14,11 @@
             <p class="text-sm text-gray-500">BIAM Feedback Management System</p>
         </div>
 
+        <div class="mb-6 flex items-center p-3 text-[12px] text-amber-700 bg-amber-50 rounded border border-amber-100">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m12-3V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2z"></path></svg>
+            <span><strong class="text-center">Security:</strong> Maximum 10 login attempts allowed.</span>
+        </div>
+
         @if (session('status'))
             <div class="mb-4 font-medium text-sm text-green-600 bg-green-50 p-3 rounded-lg">
                 {{ session('status') }}
@@ -22,6 +27,7 @@
 
         <form method="POST" action="{{ route('login') }}" class="space-y-5">
             @csrf
+            
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -33,7 +39,6 @@
                     class="w-full px-4 py-2.5 border rounded-sm focus:outline-none focus:ring-2 transition-all @error('email') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
                     required
                     autofocus
-                    autocomplete="email"
                 >
                 @error('email')
                     <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
@@ -47,9 +52,8 @@
                     type="password"
                     name="password"
                     placeholder="••••••••"
-                    class="w-full px-4 py-2.5 border rounded-s focus:outline-none focus:ring-2 transition-all @error('password') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
+                    class="w-full px-4 py-2.5 border rounded-sm focus:outline-none focus:ring-2 transition-all @error('password') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
                     required
-                    autocomplete="current-password"
                 >
                 @error('password')
                     <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
@@ -81,6 +85,5 @@
             &copy; {{ date('Y') }} BIAM Foundation. All rights reserved.
         </footer>
     </div>
-
 </body>
 </html>
