@@ -4,28 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Models\Feedback;
-use App\Http\Controllers\SmsGetWay; 
+use App\Http\Controllers\SmsGetWay;
 
 class CFeedback extends Controller
 {
-    public function StoreFeedback(Request $request)
+    public function storeFeedback(Request $request)
     {
-        try { 
-            $data = $request->validate([
-                'room_number'                            => 'required|string',
-                'phone'                                  => 'nullable|string',
-                'name'                                   => 'nullable|string',
-                'designation'                            => 'nullable|string',
-                'rating_front_desk_service'              => 'required|integer|min:1|max:4',
-                'rating_canteen_food'                    => 'required|integer|min:1|max:4',
-                'rating_canteen_staff_service'           => 'required|integer|min:1|max:4',
-                'rating_room_boys_service'               => 'required|integer|min:1|max:4',
-                'rating_cleanliness_of_room'             => 'required|integer|min:1|max:4',
-                'rating_overall_cleanliness_around_room' => 'required|integer|min:1|max:4',
-                'rating_washroom_ac_lights_fan'          => 'required|integer|min:1|max:4',
-            ]);
+        $data = $request->validate([
+            'room_number'                            => 'required|string',
+            'phone'                                  => 'nullable|string',
+            'name'                                   => 'nullable|string',
+            'designation'                            => 'nullable|string',
+            'rating_front_desk_service'              => 'required|integer|min:1|max:4',
+            'rating_canteen_food'                    => 'required|integer|min:1|max:4',
+            'rating_canteen_staff_service'           => 'required|integer|min:1|max:4',
+            'rating_room_boys_service'               => 'required|integer|min:1|max:4',
+            'rating_cleanliness_of_room'             => 'required|integer|min:1|max:4',
+            'rating_overall_cleanliness_around_room' => 'required|integer|min:1|max:4',
+            'rating_washroom_ac_lights_fan'          => 'required|integer|min:1|max:4',
+            'suggestion'                             => 'nullable|string'
+        ]);
 
+        DB::beginTransaction();
+
+        try {
             $ratings = collect($data)->filter(fn($v, $k) => str_starts_with($k, 'rating_'));
             $satisfaction = round(($ratings->sum() / ($ratings->count() * 4)) * 100);
 
@@ -33,34 +37,35 @@ class CFeedback extends Controller
                 'satisfaction_level' => $satisfaction
             ]));
 
-$map = [
-    4 => 'Best', 
-    3 => 'Good', 
-    2 => 'Fair', 
-    1 => 'Poor'
-];
-
-$sms = "BIAM FEEDBACK: Room:{$feedback->room_number}, {$feedback->name}, {$feedback->designation} " .
-       "F.Desk:" . $map[$feedback->rating_front_desk_service] . ", " .
-       "Food:" . $map[$feedback->rating_canteen_food] . ", " .
-       "Staff:" . $map[$feedback->rating_canteen_staff_service] . ", " .
-       "RoomBoy:" . $map[$feedback->rating_room_boys_service] . ", " .
-       "Cleanliness:" . $map[$feedback->rating_cleanliness_of_room] . ", " .
-       "AC\Fan\Light:" . $map[$feedback->rating_washroom_ac_lights_fan];
-
+            $map = [4 => 'Best', 3 => 'Good', 2 => 'Fair', 1 => 'Poor'];
             
-             //Log::info($sms);
+            $sms = "Room No: {$feedback->room_number}, {$feedback->name}, {$feedback->designation} " .
+                   "F.Desk:" . ($map[$feedback->rating_front_desk_service] ?? 'N/A') . ", " .
+                   "Food:" . ($map[$feedback->rating_canteen_food] ?? 'N/A') . ", " .
+                   "Staff:" . ($map[$feedback->rating_canteen_staff_service] ?? 'N/A') . ", " .
+                   "Room Boys:" . ($map[$feedback->rating_room_boys_service] ?? 'N/A') . ", " .
+                   "Cleanliness:" . ($map[$feedback->rating_cleanliness_of_room] ?? 'N/A') . ", " .
+                   "Washroom/AC/Fan:" . ($map[$feedback->rating_washroom_ac_lights_fan] ?? 'N/A');
+
+           // Log::info($sms);
               $CSms = new SmsGetWay();
               $CSms->SendSMS($feedback, $sms);
-            
+
+            DB::commit();
             return response()->json([
-                'message' => 'Feedback submitted successfully',
-                'satisfaction_percentage' => $satisfaction
+                'status' => 'success',
+                'message' => 'Feedback saved and SMS sent',
+                'satisfaction' => $satisfaction
             ], 201);
 
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json(['message' => $e->getMessage()], 500);
+            DB::rollBack();
+            Log::error("Feedback System Failure: " . $e->getMessage());
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Transaction failed. Data rolled back to prevent mismatch.'
+            ], 500);
         }
     }
 }

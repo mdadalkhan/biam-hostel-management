@@ -30,4 +30,7 @@ return [
         'msisdn'    => array_filter(array_map('trim', explode(',', env('SMS_MSISDN', '')))),
     ],
 
+    'pagination' => [
+        'feedback_pagination' => env('FEEDBACK_PAGINATION', 5),
+    ],
 ];

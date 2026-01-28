@@ -1,5 +1,5 @@
-import './bootstrap';
-import {sum} from './components/clock'
+import './bootstrap'; // Loads Axios/Headers
 
-
-
+import Alpine from 'alpinejs';
+window.Alpine = Alpine;
+Alpine.start();

@@ -30,7 +30,7 @@
                     name="email"
                     value="{{ old('email') }}" 
                     placeholder="username@gmail.com"
-                    class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all @error('email') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
+                    class="w-full px-4 py-2.5 border rounded-sm focus:outline-none focus:ring-2 transition-all @error('email') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
                     required
                     autofocus
                     autocomplete="email"
@@ -47,7 +47,7 @@
                     type="password"
                     name="password"
                     placeholder="••••••••"
-                    class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all @error('password') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
+                    class="w-full px-4 py-2.5 border rounded-s focus:outline-none focus:ring-2 transition-all @error('password') border-red-500 focus:ring-red-400 @else border-gray-300 focus:ring-indigo-500 @enderror"
                     required
                     autocomplete="current-password"
                 >
