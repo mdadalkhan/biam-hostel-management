@@ -1,24 +1,44 @@
 <?php
+/**
+ * @author: MD. ADAL KAHN 
+ * <mdadalkhan@gmail.com>
+ * */
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
-class CAuth extends Controller {
-    
-    public function feedback() {
+class CAuth extends Controller 
+{
+    /**
+     * Show the feedback/welcome page.
+     */
+    public function feedback(): View 
+    {
         return view('welcome');
     }
 
-    public function viewLogin() {
+    /**
+     * Show the login form, or redirect if already authenticated.
+     */
+    public function viewLogin(): View | RedirectResponse 
+    {
         if (Auth::check()) {
             return redirect()->intended(route('admin.dashboard'));
         } 
         return view('Login');
     }
 
-    public function login(Request $request) {
+    /**
+     * Handle an authentication attempt.
+     */
+    public function login(Request $request): RedirectResponse 
+    {
         $credentials = $request->validate([
            'email'    => ['required', 'email'],
            'password' => ['required']
@@ -34,10 +54,15 @@ class CAuth extends Controller {
         ])->onlyInput('email');
     }
 
-    public function logout(Request $request) {
+    /**
+     * Log the user out of the application.
+     */
+    public function logout(Request $request): RedirectResponse 
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
         return redirect()->intended(route('welcome'));
     }
 }

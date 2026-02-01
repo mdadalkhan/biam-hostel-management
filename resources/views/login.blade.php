@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login | BIAM Feedback System</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -16,7 +17,7 @@
 
         <div class="mb-6 flex items-center p-3 text-[12px] text-amber-700 bg-amber-50 rounded border border-amber-100">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m12-3V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2z"></path></svg>
-            <span><strong class="text-center">Security:</strong> Maximum 10 login attempts allowed.</span>
+            <span><strong class="text-center">Security:</strong> Maximum 05 login attempts allowed.</span>
         </div>
 
         @if (session('status'))

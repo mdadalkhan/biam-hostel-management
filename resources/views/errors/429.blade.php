@@ -4,12 +4,26 @@
 @section('message')
 <div class="flex flex-col items-center justify-center space-y-6" 
      x-data="{ 
-        seconds: {{ $exception->headers['Retry-After'] ?? 60 }},
+        seconds: 0,
+        totalDuration: {{ $exception->headers['Retry-After'] ?? 60 }},
         init() {
-            setInterval(() => {
-                if (this.seconds > 0) {
-                    this.seconds--;
-                } else {
+            let endTime = localStorage.getItem('lockout_end_time');
+            let now = Math.floor(Date.now() / 1000);
+
+            if (!endTime || now > endTime) {
+                endTime = now + this.totalDuration;
+                localStorage.setItem('lockout_end_time', endTime);
+            }
+
+            this.seconds = endTime - now;
+
+            let timer = setInterval(() => {
+                let currentNow = Math.floor(Date.now() / 1000);
+                this.seconds = Math.max(0, endTime - currentNow);
+
+                if (this.seconds <= 0) {
+                    clearInterval(timer);
+                    localStorage.removeItem('lockout_end_time');
                     window.location.href = '{{ route('login') }}';
                 }
             }, 1000);
@@ -28,7 +42,7 @@
     <div class="w-full max-w-xs p-10 bg-white rounded-3xl border border-gray-100 shadow-2xl shadow-indigo-100 text-center relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-1 bg-gray-50">
             <div class="h-full bg-indigo-600 transition-all duration-1000 ease-linear" 
-                 :style="`width: ${(seconds / {{ $exception->headers['Retry-After'] ?? 60 }}) * 100}%` text-indigo-600">
+                 :style="`width: ${(seconds / totalDuration) * 100}%` text-indigo-600">
             </div>
         </div>
 

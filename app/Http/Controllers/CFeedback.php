@@ -1,17 +1,31 @@
 <?php
+/**
+ * @author: MD. ADAL KAHN 
+ * <mdadalkhan@gmail.com>
+ * */
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
+
 use App\Models\Feedback;
 use App\Http\Controllers\SmsGetWay;
 
+use Exception;
+
 class CFeedback extends Controller
 {
-    public function storeFeedback(Request $request)
+    /**
+     * Store feedback data and trigger SMS notification.
+     */
+    public function storeFeedback(Request $request): JsonResponse
     {
+        /** @var array<string, mixed> $data */
         $data = $request->validate([
             'room_number'                            => 'required|string',
             'phone'                                  => 'nullable|string',
@@ -30,41 +44,47 @@ class CFeedback extends Controller
         DB::beginTransaction();
 
         try {
-            $ratings = collect($data)->filter(fn($v, $k) => str_starts_with($k, 'rating_'));
+            // Calculate satisfaction percentage
+            $ratings = collect($data)->filter(fn(mixed $v, string $k): bool => str_starts_with($k, 'rating_'));
+            
+            /** @var float $satisfaction */
             $satisfaction = round(($ratings->sum() / ($ratings->count() * 4)) * 100);
 
+            /** @var Feedback $feedback */
             $feedback = Feedback::create(array_merge($data, [
-                'satisfaction_level' => $satisfaction
+                'satisfaction_level' => (int) $satisfaction
             ]));
 
+            /** @var array<int, string> $map */
             $map = [4 => 'Best', 3 => 'Good', 2 => 'Fair', 1 => 'Poor'];
             
             $sms = "Room No: {$feedback->room_number}, {$feedback->name}, {$feedback->designation} " .
-                   "F.Desk:" . ($map[$feedback->rating_front_desk_service] ?? 'N/A') . ", " .
-                   "Food:" . ($map[$feedback->rating_canteen_food] ?? 'N/A') . ", " .
-                   "Staff:" . ($map[$feedback->rating_canteen_staff_service] ?? 'N/A') . ", " .
-                   "Room Boys:" . ($map[$feedback->rating_room_boys_service] ?? 'N/A') . ", " .
-                   "Cleanliness:" . ($map[$feedback->rating_cleanliness_of_room] ?? 'N/A') . ", " .
-                   "Washroom/AC/Fan:" . ($map[$feedback->rating_washroom_ac_lights_fan] ?? 'N/A');
+                   "F.Desk:" . ($map[(int)$feedback->rating_front_desk_service] ?? 'N/A') . ", " .
+                   "Food:" . ($map[(int)$feedback->rating_canteen_food] ?? 'N/A') . ", " .
+                   "Staff:" . ($map[(int)$feedback->rating_canteen_staff_service] ?? 'N/A') . ", " .
+                   "Room Boys:" . ($map[(int)$feedback->rating_room_boys_service] ?? 'N/A') . ", " .
+                   "Cleanliness:" . ($map[(int)$feedback->rating_cleanliness_of_room] ?? 'N/A') . ", " .
+                   "Washroom/AC/Fan:" . ($map[(int)$feedback->rating_washroom_ac_lights_fan] ?? 'N/A');
 
            // Log::info($sms);
-            / $CSms = new SmsGetWay();
-              $CSms->SendSMS($feedback, $sms);
+                $CSms = new SmsGetWay();
+                $CSms->SendSMS($feedback, $sms);
 
             DB::commit();
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Feedback saved and SMS sent',
                 'satisfaction' => $satisfaction
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error("Feedback System Failure: " . $e->getMessage());
             
             return response()->json([
                 'status' => 'error',
-                'message' => 'Transaction failed. Data rolled back to prevent mismatch.'
+                'message' => 'Transaction failed. Data rolled back.'
             ], 500);
         }
     }
