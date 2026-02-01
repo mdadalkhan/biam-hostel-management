@@ -79,6 +79,10 @@
                                 <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Full Name</label>
                                 <input type="text" name="name" class="w-full px-3 py-1.5 text-sm rounded border border-slate-300 outline-none" />
                             </div>
+                            <div class="col-span-2">
+                                <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Designation</label>
+                                <input type="text" name="designation" class="w-full px-3 py-1.5 text-sm rounded border border-slate-300 outline-none" />
+                            </div>
                         </div>
                     </div>
                     <div>

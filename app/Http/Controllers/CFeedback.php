@@ -48,8 +48,8 @@ class CFeedback extends Controller
                    "Washroom/AC/Fan:" . ($map[$feedback->rating_washroom_ac_lights_fan] ?? 'N/A');
 
            // Log::info($sms);
-              $CSms = new SmsGetWay();
-              $CSms->SendSMS($feedback, $sms);
+            //  $CSms = new SmsGetWay();
+             // $CSms->SendSMS($feedback, $sms);
 
             DB::commit();
             return response()->json([
