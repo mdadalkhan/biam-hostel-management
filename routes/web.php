@@ -13,10 +13,8 @@ use App\Http\Controllers\SmsGetWay;
 use App\Http\Controllers\CAdminDashboard;
 use App\Http\Controllers\CAdminNavbar;
 use App\Providers\AppServiceProvider;
-
  
 Route::middleware(['throttle:public'])->group(function(){
-    Route::get('/',               [CAuth::class,    'feedback'])->name('welcome');
     Route::get('/login',          [CAuth::class,    'viewLogin'])->name('login');
     Route::post('/login',         [CAuth::class,    'login'])->name('login.submit');
     Route::post('/logout',        [CAuth::class,    'logout'])->name('logout');
@@ -25,32 +23,25 @@ Route::middleware(['throttle:public'])->group(function(){
 
 
 
-
-
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','web'])->group(function () {
     /**
      * Authenticated routes for admin.
      * */
+    Route::get('/',                    [CAuth::class,    'feedback'])->name('welcome');
     Route::get('/admin',               [CAdminDashboard::class,'adminDashboard'])->name('admin.dashboard');
     Route::get('/admin/feedback/{id}', [CAdminDashboard::class,'getIndividualReport'])->name('feedback.report');
 
     /**
      * Navbar for admin
      * */
-     Route::get('/admin/hostel',     [CAdminNavbar::class, 'hostel'])->name('admin.navbar.hostel');
-     Route::get('/admin/report',     [CAdminNavbar::class, 'report'])->name('admin.navbar.report');
-     Route::get('/admin/checkout',   [CAdminNavbar::class, 'checkout'])->name('admin.navbar.checkout');
+     Route::get('/admin/hostel',       [CAdminNavbar::class, 'hostel'])->name('admin.navbar.hostel');
+     Route::get('/admin/report',       [CAdminNavbar::class, 'report'])->name('admin.navbar.report');
+     Route::get('/admin/checkout',     [CAdminNavbar::class, 'checkout'])->name('admin.navbar.checkout');
 
 
      /**
-      * API routes for ajax handling
+      * Handling 419 Error
       * */
-     Route::get('/admin/api/v1', function(){
-            return response()->json([
-               'status' => 'Reading success',
-               'status' => '200'
-            ]); 
-     });
-
+     Route::get('/admin/csrf', [CFeedback::class,'csrfRefresh'])->name('csrf.refresh');   
 });
 

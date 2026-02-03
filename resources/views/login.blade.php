@@ -10,7 +10,7 @@
 <body class="font-sans antialiased min-h-screen bg-gradient-to-br from-indigo-100 via-white to-indigo-200 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-sm shadow-sm p-6">
         <div class="flex flex-col items-center mb-8">
-            <img src="{{ asset('images/logo.png') }}" alt="BIAM Logo" class="h-16 w-auto mb-4">
+            <img src="{{ asset('images/bd.svg') }}" alt="BIAM Logo" class="h-16 w-auto mb-4">
             <h1 class="text-xl font-semibold text-gray-800">Welcome</h1>
             <p class="text-sm text-gray-500">BIAM Feedback Management System</p>
         </div>
@@ -28,7 +28,6 @@
 
         <form method="POST" action="{{ route('login') }}" class="space-y-5">
             @csrf
-            
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -62,10 +61,10 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <label class="inline-flex items-center cursor-pointer">
+               <!-- <label class="inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="remember" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
+                </label> -->
                 
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">

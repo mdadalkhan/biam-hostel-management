@@ -44,7 +44,13 @@ class CAuth extends Controller
            'password' => ['required']
         ]);
 
-        if (Auth::attempt($credentials, $request->has('remember'))) {
+        /**
+         * Adal Khan
+         * $request->has('remember') use this in the seconde arguments if remembered me featured is required.
+         * also remember me form control need to be enabled in login.blade.php
+         * 
+         * */ 
+        if (Auth::attempt($credentials, false)) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         } 

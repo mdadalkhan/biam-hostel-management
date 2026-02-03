@@ -1,8 +1,4 @@
 <?php
-/**
- * @author: MD. ADAL KAHN 
- * <mdadalkhan@gmail.com>
- * */
 
 declare(strict_types=1);
 
@@ -12,20 +8,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
-
 use App\Models\Feedback;
 use App\Http\Controllers\SmsGetWay;
-
 use Exception;
 
 class CFeedback extends Controller
 {
+
     /**
-     * Store feedback data and trigger SMS notification.
-     */
+     * Regenerate token for handling 419 error
+     * Regenerate token and store it inside session. generated token can be accessed invoked/get via csrf_token()
+     * */
+    public function csrfRefresh() {
+       session()->regenerateToken(); 
+       return response()->json([
+        'csrf_token' => csrf_token()
+       ]);
+
+    }
+    /**
+     * Receive Feedback
+     * @return json()
+     * */
     public function storeFeedback(Request $request): JsonResponse
     {
-        /** @var array<string, mixed> $data */
         $data = $request->validate([
             'room_number'                            => 'required|string',
             'phone'                                  => 'nullable|string',
@@ -44,18 +50,13 @@ class CFeedback extends Controller
         DB::beginTransaction();
 
         try {
-            // Calculate satisfaction percentage
             $ratings = collect($data)->filter(fn(mixed $v, string $k): bool => str_starts_with($k, 'rating_'));
-            
-            /** @var float $satisfaction */
             $satisfaction = round(($ratings->sum() / ($ratings->count() * 4)) * 100);
 
-            /** @var Feedback $feedback */
             $feedback = Feedback::create(array_merge($data, [
                 'satisfaction_level' => (int) $satisfaction
             ]));
 
-            /** @var array<int, string> $map */
             $map = [4 => 'Best', 3 => 'Good', 2 => 'Fair', 1 => 'Poor'];
             
             $sms = "Room No: {$feedback->room_number}, {$feedback->name}, {$feedback->designation} " .
@@ -66,16 +67,19 @@ class CFeedback extends Controller
                    "Cleanliness:" . ($map[(int)$feedback->rating_cleanliness_of_room] ?? 'N/A') . ", " .
                    "Washroom/AC/Fan:" . ($map[(int)$feedback->rating_washroom_ac_lights_fan] ?? 'N/A');
 
-           // Log::info($sms);
-                $CSms = new SmsGetWay();
-                $CSms->SendSMS($feedback, $sms);
+                  // Log::info($sms);
+                 $CSms = new SmsGetWay();
+                 $CSms->SendSMS($feedback, $sms);
 
             DB::commit();
+
+            $request->session()->regenerateToken();
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Feedback saved and SMS sent',
-                'satisfaction' => $satisfaction
+                'satisfaction' => $satisfaction,
+                'new_token' => csrf_token()
             ], 201);
 
         } catch (Exception $e) {

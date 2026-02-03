@@ -30,14 +30,14 @@
     <div class="bg-white shadow-2xl rounded-sm p-4 md:p-6 w-full max-w-7xl border border-slate-200">
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-100 pb-4 gap-4">
             <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 bg-white w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center shadow-sm">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8 object-contain" />
+                <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center">
+                    <img src="{{ asset('images/bd.svg') }}" alt="Logo" class="w-18 h-18 object-contain" />
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-extrabold text-slate-800 tracking-tight uppercase leading-none">BIAM Foundation</h1>
                     <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Guest Feedback System v1.0</p>
                     <p class="inline-block px-2 py-0.5 text-[9px] font-bold text-red-500 bg-red-50 rounded-full border border-red-100 mt-1">
-                        Auto refresh after: <span x-text="600 - timer"></span>s
+                         Auto Refresh: <span x-text="Math.floor(timer / 60) + ':' + (timer % 60).toString().padStart(2, '0')"></span>
                     </p>
                 </div>
             </div>
@@ -164,7 +164,7 @@
     <script>
         function feedbackHandler() {
             return {
-                timer: 0,
+                timer: 600,
                 loading: false,
                 status: null,
                 errorMessage: '',
@@ -177,12 +177,36 @@
 
                 startTimer() {
                     setInterval(() => {
-                        this.timer++;
-                        if (this.timer >= 600) location.reload();
+                        if (this.timer > 0) {
+                            this.timer--;
+                        } else {
+                            this.handlePing();
+                        }
                     }, 1000);
                 },
 
-                resetTimer() { this.timer = 0; },
+                async handlePing() {
+                    try {
+                        const response = await fetch('/admin/csrf', {
+                            method: 'GET',
+                            credentials: 'same-origin'
+                        });
+
+                        if (response.ok) {
+                            const res = await response.json();
+                            document.querySelector('meta[name="csrf-token"]').content = res.csrf_token;
+                            this.resetTimer();
+                        } else {
+                            throw new Error();
+                        }
+                    } catch (e) {
+                        location.reload();
+                    }
+                },
+
+                resetTimer() {
+                    this.timer = 600;
+                },
 
                 removeError(key) {
                     this.errors = this.errors.filter(e => e !== key);
@@ -192,17 +216,13 @@
                     this.errors = [];
                     const form = e.target;
                     const data = new FormData(form);
-                    
-                    // Validate Ratings
                     const ratingKeys = {!! json_encode(array_keys($services)) !!};
+                    
                     ratingKeys.forEach(key => {
                         if (!data.get(key)) this.errors.push(key);
                     });
 
-                    if (this.errors.length || this.phoneError) {
-                        document.querySelector('.bg-red-50')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return;
-                    }
+                    if (this.errors.length || this.phoneError) return;
 
                     this.loading = true;
                     this.status = null;
@@ -211,27 +231,27 @@
                         const response = await fetch('{{ route("sendfeedback") }}', {
                             method: 'POST',
                             headers: { 
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                 'Accept': 'application/json' 
                             },
                             body: data
                         });
                         
                         const res = await response.json();
-                        
                         if (res.status === 'success') {
                             this.status = 'success';
                             form.reset();
                             this.formData.phone = '';
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            document.querySelector('meta[name="csrf-token"]').content = res.new_token;
                             setTimeout(() => this.status = null, 5000);
+                            this.resetTimer();
                         } else {
                             this.status = 'error';
-                            this.errorMessage = res.message || 'Validation Error';
+                            this.errorMessage = res.message;
                         }
                     } catch (err) {
                         this.status = 'error';
-                        this.errorMessage = 'Server Connection Failed.';
+                        this.errorMessage = 'Server connection failed.';
                     } finally {
                         this.loading = false;
                     }
