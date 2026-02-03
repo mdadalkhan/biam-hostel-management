@@ -28,7 +28,6 @@
     @touchstart="resetTimer()"
 >
     <div class="bg-white shadow-2xl rounded-sm p-4 md:p-6 w-full max-w-7xl border border-slate-200">
-        
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-100 pb-4 gap-4">
             <div class="flex items-center gap-3">
                 <div class="flex-shrink-0 bg-white w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center shadow-sm">
