@@ -1,8 +1,8 @@
 <?php
 /**
- * @author: MD. ADAL KAHN 
- * <mdadalkhan@gmail.com>
- * 02/02/2026
+ * @author: MD. ADAL KAHN <mdadalkhan@gmail.com>
+ * @created_at 02/02/2026
+ * @updated_at 10/02/2026
  * */
 
 declare(strict_types=1);
@@ -26,11 +26,6 @@ class CAdminDashboard extends Controller {
         return view('admin.dashboard', compact('feedback'));
     }
    
-
-
-    /**
-     * Display a specific feedback report by ID.
-     */
     public function getIndividualReport(int $id): View {
         /** @var Feedback $report */
         $report = Feedback::findOrFail($id);
@@ -38,11 +33,6 @@ class CAdminDashboard extends Controller {
         return view('admin.feedback_report', compact('report'));
     }
 
-
-
-    /**
-     * Display the user list tab.
-     */
     public function tab(): View {
         return view('admin.user_list');
     }

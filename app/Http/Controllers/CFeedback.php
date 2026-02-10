@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author: MD. ADAL KAHN <mdadalkhan@gmail.com>
+ * @created_at 01/02/2026
+ * @updated_at 10/02/2026
+ * */
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
@@ -14,11 +20,6 @@ use Exception;
 
 class CFeedback extends Controller
 {
-
-    /**
-     * Regenerate token for handling 419 error
-     * Regenerate token and store it inside session. generated token can be accessed invoked/get via csrf_token()
-     * */
     public function csrfRefresh() {
        session()->regenerateToken(); 
        return response()->json([
@@ -26,10 +27,7 @@ class CFeedback extends Controller
        ]);
 
     }
-    /**
-     * Receive Feedback
-     * @return json()
-     * */
+
     public function storeFeedback(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -67,7 +65,7 @@ class CFeedback extends Controller
                    "Cleanliness:" . ($map[(int)$feedback->rating_cleanliness_of_room] ?? 'N/A') . ", " .
                    "Washroom/AC/Fan:" . ($map[(int)$feedback->rating_washroom_ac_lights_fan] ?? 'N/A');
 
-                  // Log::info($sms);
+                  // Log::info($sms); 
                  $CSms = new SmsGetWay();
                  $CSms->SendSMS($feedback, $sms);
 

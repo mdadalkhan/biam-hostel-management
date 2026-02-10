@@ -1,14 +1,14 @@
 <?php
 /**
- * @author: MD. ADAL KAHN 
- * <mdadalkhan@gmail.com>
+ * @author: MD. ADAL KAHN <mdadalkhan@gmail.com>
+ * @created_at 29/01/2026
+ * @updated_at 10/02/2026
  * */
 
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Feedback;
@@ -16,32 +16,21 @@ use Exception;
 
 class SmsGetWay extends Controller
 {
-    /**
-     * Development helper for testing SMS output.
-     */
     public function SendSMSDev(int|string $id, string $sms): string
     {
         return "Data Inserted with Id " . $id . " With " . $sms;
     }
 
-    /**
-     * Placeholder for checking API balance.
-     */
     public function balance(): void
     {
-        // To be implemented
     }
 
-    /**
-     * Send SMS via Banglalink Corporate Gateway.
-     */
     public function SendSMS(Feedback $feedback, string $sms): bool
     {
-        $url    = "https://corpsms.banglalink.net/bl/api/v1/smsapigw/";
+        $url = "https://corpsms.banglalink.net/bl/api/v1/smsapigw/";
         $senderChars = "abcdefghijklmnopqrstuvwxyz1234567890";
 
         try {
-            /** @var array<string, string|null> $credentials */
             $credentials = [
                 'username'      => config('services.sms.username'),
                 'password'      => config('services.sms.password'),
@@ -62,7 +51,6 @@ class SmsGetWay extends Controller
                 ->timeout(40)
                 ->post($url, $credentials);
 
-            /** @var array<string, mixed> $status */
             $status = $response->json() ?? [];
 
             if (isset($status['statusInfo']['statusCode']) && (string)$status['statusInfo']['statusCode'] === "1000") {
@@ -70,7 +58,7 @@ class SmsGetWay extends Controller
                 return true;
             }
 
-            $feedback->update(['sms_status' => 'pending']);
+            $feedback->update(['sms_status' => 'failed']);
             return false;
 
         } catch (Exception $e) {

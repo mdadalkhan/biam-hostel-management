@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author <mdadalkhan@gmail.com>
+ * @author MD. ADAL KHAN <mdadalkhan@gmail.com>
  * @created_at 10/02/2026
  * @updated_at 10/02/2026
  * */
