@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author <mdadalkhan@gmail.com>
+ * @created_at 10/02/2026
+ * @updated_at 10/02/2026
+ * */
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
@@ -14,26 +20,21 @@ use App\Models\Feedback;
 
 class CAdminNavbarReport extends Controller 
 {
-    /**
-     * Generates a comprehensive Guest Feedback Report.
-     * Includes both an aggregated summary and a detailed listing.
-     */
     public function getGuestReportSummary(Request $request): View|RedirectResponse 
     {
         try {
-            // 1. Strict Validation
+       
             $validated = $request->validate([
                 'type'      => 'required|in:report,hostel,vacancy',
                 'startDate' => 'required|date', 
                 'endDate'   => 'required|date|after_or_equal:startDate',
             ]);
 
-            // 2. Date Normalization
+
             $dbStart = Carbon::parse($validated['startDate'])->startOfDay();
             $dbEnd   = Carbon::parse($validated['endDate'])->endOfDay();
             
-            // 3. Aggregate Statistical Summary (Database Level)
-            // This is efficient because it returns only ONE row of data
+
             $stats = Feedback::whereBetween('created_at', [$dbStart, $dbEnd])
                 ->selectRaw('
                     COUNT(*) as total_count,
@@ -48,18 +49,14 @@ class CAdminNavbarReport extends Controller
                 ')
                 ->first();
 
-            // 4. Handle "No Data" scenario safely
             if (!$stats || $stats->total_count === 0) {
                 return back()->with('error', 'No feedback entries found for the selected date range.')->withInput();
             }
 
-            // 5. Fetch Individual Records for the Detailed List
-            // We order by latest entries first
             $feedbacks = Feedback::whereBetween('created_at', [$dbStart, $dbEnd])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // 6. Return Data to Blade
             return view('admin.reports.summary', [
                 'type'      => $validated['type'],
                 'start'     => $dbStart->format('d M, Y'),
@@ -70,12 +67,11 @@ class CAdminNavbarReport extends Controller
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handles form validation errors
             return back()->withErrors($e->errors())->withInput();
         } catch (Exception $e) {
-            // Logs actual error for debugging and shows a friendly message to user
+
             Log::error("BIAM Feedback Report Error: " . $e->getMessage(), [
-                'user_id' => auth()->id(),
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
                 'trace' => $e->getTraceAsString()
             ]);
             
