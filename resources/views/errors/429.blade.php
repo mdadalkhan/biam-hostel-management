@@ -31,11 +31,11 @@
      }">
     
     <div class="text-center space-y-2">
-        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">
+        <h2 class="text-2xl font-boldtext-gray-900">
             {{ __('Security Lockout') }}
         </h2>
-        <p class="text-gray-500 max-w-sm mx-auto leading-relaxed">
-            {{ __('Multiple failed attempts detected. Access is restricted until the timer expires.') }}
+        <p class="text-gray-900 max-w-sm mx-auto">
+            {{ __('Please wait..') }}
         </p>
     </div>
 
