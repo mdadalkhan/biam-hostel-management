@@ -37,3 +37,6 @@ class CAdminDashboard extends Controller {
         return view('admin.user_list');
     }
 }
+
+
+

@@ -3,7 +3,7 @@
 /**
  * @author MD. ADAL KHAN <mdadalkhan@gmail.com>
  * @created_at 10/02/2026
- * @updated_at 10/02/2026
+ * @updated_at 19/02/2026
  * */
 
 declare(strict_types=1);
@@ -20,6 +20,10 @@ use App\Models\Feedback;
 
 class CAdminNavbarReport extends Controller 
 {
+    /**
+     * Generate list of guest feedback based on given date range.
+     * @AK
+     * */
     public function getGuestReportSummary(Request $request): View|RedirectResponse 
     {
         try {
@@ -29,7 +33,6 @@ class CAdminNavbarReport extends Controller
                 'startDate' => 'required|date', 
                 'endDate'   => 'required|date|after_or_equal:startDate',
             ]);
-
 
             $dbStart = Carbon::parse($validated['startDate'])->startOfDay();
             $dbEnd   = Carbon::parse($validated['endDate'])->endOfDay();
@@ -78,4 +81,5 @@ class CAdminNavbarReport extends Controller
             return back()->with('error', 'An unexpected error occurred while generating the report.');
         }
     }
+
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\CFeedback;
 use App\Http\Controllers\CAuth;
 use App\Http\Controllers\CAdminDashboard;
 use App\Http\Controllers\CAdminNavbar;
+use App\Http\Controllers\CAdminNavbarHostel;
 use App\Http\Controllers\CAdminNavbarReport;
 
 
@@ -36,6 +37,16 @@ Route::middleware(['auth'])->group(function () {
      * Navbar for admin
      * */
      Route::get('/admin/hostel',                              [CAdminNavbar::class,                      'hostel'])->name('admin.navbar.hostel');
+     
+     Route::post('/admin/hostel/seats/create',                [CAdminNavbarHostel::class,'saveSeatInfo'])->name('admin.navbar.hostel.save_seat');
+     Route::post('/admin/hostel/seats/delete/{id}',           [CAdminNavbarHostel::class,'deleteSeatInfo'])->name('admin.navbar.hostel.delete_seat');
+     Route::get('/admin/hostel/seats/edit/{id}',              [CAdminNavbarHostel::class,'editSeatInfoView'])->name('admin.navbar.hostel.edit_seat_view');
+     Route::post('/admin/hostel/seats/edit/{id}',             [CAdminNavbarHostel::class,'editSeatInfoSubmit'])->name('admin.navbar.hostel.edit_seat_submit');
+     
+     Route::post('/admin/hostel/seats/checkin',               [CAdminNavbarHostel::class,'editSeatInfoSubmit'])->name('admin.hostel.seats.checkin');
+
+
+
      Route::get('/admin/report',                              [CAdminNavbar::class,                      'report'])->name('admin.navbar.report');
      Route::post('/admin/report/generate',                    [CAdminNavbarReport::class, 'getGuestReportSummary'])->name('admin.navbar.report.summary');
 

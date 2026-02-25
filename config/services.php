@@ -32,5 +32,6 @@ return [
 
     'pagination' => [
         'feedback_pagination' => env('FEEDBACK_PAGINATION', 5),
+        'seat_pagination'     => env('SEAT_PAGINATION', 5)
     ],
 ];

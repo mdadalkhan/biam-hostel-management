@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author <mdadalkhan@gmail.com>
+ * @created_at: 18/02/2026
+ * @updated_at: 18/02/2026
+ * */
 
 namespace Database\Seeders;
 
@@ -21,7 +26,8 @@ class DatabaseSeeder extends Seeder
             'password' => 'biam1234'
         ]);
          $this->Call([
-            FeedbackSeeder::class
+            FeedbackSeeder::class,
+            SeatsSeeder::class
         ]);
     }
 }

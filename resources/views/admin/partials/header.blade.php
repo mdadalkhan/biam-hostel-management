@@ -7,7 +7,7 @@
                     BIAM <span class="text-indigo-600">Foundation</span>
                 </span>
                 <span class="text-[8px] sm:text-[9px] text-gray-400 font-medium uppercase tracking-widest">
-                    Feedback Tracking System
+                    Hostel Management
                 </span>
             </div>
         </a>

@@ -12,12 +12,12 @@
             'active' => request()->is('/')
         ])
 
-        @include('admin.partials.nav-link', [
+     <!--    @include('admin.partials.nav-link', [
             'icon'   => 'dashboard', 
             'label'  => 'Dashboard', 
             'route'  => route('admin.dashboard'), 
             'active' => request()->routeIs('admin.dashboard')
-        ])
+        ]) -->
 
 
 
@@ -37,7 +37,7 @@
 
         @include('admin.partials.nav-link', [
             'icon'   => 'settings', 
-            'label'  => 'Checkin/Out', 
+            'label'  => 'CheckOut', 
             'route'  => route('admin.navbar.checkout'), 
             'active' => request()->routeIs('admin.navbar.checkout')
         ])

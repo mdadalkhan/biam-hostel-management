@@ -1,8 +1,6 @@
 @extends('layouts.admin')
-
 @section('admin_contents')
 <div class="p-4 bg-gray-50 min-h-screen">
-    {{-- Global Session Error Alert --}}
     @if(session('error'))
         <div class="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-xs rounded-sm flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -11,10 +9,7 @@
             {{ session('error') }}
         </div>
     @endif
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        
-        {{-- Guest Feedback Summary Card --}}
         <div class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2 font-bold text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -26,42 +21,29 @@
                 <form action="{{route('admin.navbar.report.summary')}}" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="type" value="report">
-                    
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Start Date</label>
                             <input type="date" name="startDate" value="{{ old('startDate') }}" class="w-full px-2 py-1.5 border @error('startDate') border-red-500 @else border-gray-300 @enderror rounded-sm text-sm focus:ring-1 focus:ring-indigo-500 outline-none">
-                            @error('startDate')
-                                <p class="text-[9px] text-red-500 mt-1 font-semibold italic">{{ $message }}</p>
-                            @enderror
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">End Date</label>
                             <input type="date" name="endDate" value="{{ old('endDate') }}" class="w-full px-2 py-1.5 border @error('endDate') border-red-500 @else border-gray-300 @enderror rounded-sm text-sm focus:ring-1 focus:ring-indigo-500 outline-none">
-                            @error('endDate')
-                                <p class="text-[9px] text-red-500 mt-1 font-semibold italic">{{ $message }}</p>
-                            @enderror
                         </div>
                     </div>
-
                     <div class="py-2 border-t border-gray-50 mt-2">
                         <label class="flex items-center space-x-2 cursor-pointer group">
-                            <input type="checkbox" name="download" value="1" class="w-4 h-4 text-indigo-600 border-gray-300 rounded-sm focus:ring-indigo-500">
+                            <input type="checkbox" name="download" value="1" class="w-4 h-4 text-indigo-600 border-gray-300 rounded-sm">
                             <span class="text-sm text-gray-600 group-hover:text-indigo-600 font-medium text-xs">Download as PDF</span>
                         </label>
                     </div>
-
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 rounded-sm transition shadow-sm flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 rounded-sm transition flex items-center justify-center gap-2">
                         Generate Report
                     </button>
                 </form>
             </div>
         </div>
 
-        {{-- Hostel Occupancy Card --}}
         <div class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2 font-bold text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,35 +55,50 @@
                 <div class="flex justify-between items-center bg-indigo-50 p-3 rounded-sm border border-indigo-100">
                     <div>
                         <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-tighter">Total Residents</p>
-                        <p class="text-2xl font-black text-indigo-700 leading-none">124</p>
+                        <p class="text-2xl font-black text-indigo-700 leading-none">{{$occupency}}</p>
                     </div>
                     <div class="text-right">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Current Status</p>
-                        <p class="text-xs font-bold text-gray-600">88% Capacity</p>
+                        <p class="text-xs font-bold text-gray-600"> {{$capacity}} Capacity</p>
                     </div>
                 </div>
                 
-                <form action="{{route('admin.navbar.report.summary')}}" method="POST" class="space-y-3">
+                <form action="#" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="type" value="hostel">
-                    <div class="py-1 border-b border-gray-50">
-                        <label class="flex items-center space-x-2 cursor-pointer group">
-                            <input type="checkbox" name="download" value="1" class="w-4 h-4 text-indigo-600 border-gray-300 rounded-sm focus:ring-indigo-500">
-                            <span class="text-sm text-gray-600 group-hover:text-indigo-600 font-medium text-xs">Download List as PDF</span>
-                        </label>
+                    
+                    <div class="space-y-2">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Select Room Type</p>
+                        <div class="flex items-center gap-4 bg-gray-50 p-2 rounded-sm border border-gray-100">
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="room_filter" value="all" checked class="w-3.5 h-3.5 text-indigo-600 border-gray-300 focus:ring-0">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase">All</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="room_filter" value="ac" class="w-3.5 h-3.5 text-indigo-600 border-gray-300 focus:ring-0">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase">AC</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="room_filter" value="non-ac" class="w-3.5 h-3.5 text-indigo-600 border-gray-300 focus:ring-0">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase">Non-AC</span>
+                            </label>
+                        </div>
                     </div>
-                    <button type="submit" class="w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-xs font-bold py-2 rounded-sm transition flex items-center justify-center gap-2 uppercase tracking-tight">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        View Residents
-                    </button>
+
+                    <div class="flex items-center gap-3">
+                        <button type="submit" name="download" value="0" class="flex-1 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-[11px] font-bold py-2 rounded-sm transition uppercase tracking-tight">
+                            View Residents
+                        </button>
+                        <button type="submit" name="download" value="1" class="px-3 bg-indigo-600 text-white hover:bg-indigo-700 py-2 rounded-sm transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        {{-- Vacancy Insights Card --}}
         <div class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2 font-bold text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,8 +109,8 @@
             <div class="p-4 space-y-4">
                 <div class="flex justify-between items-center bg-green-50 p-3 rounded-sm border border-green-100">
                     <div>
-                        <p class="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Available Slots</p>
-                        <p class="text-2xl font-black text-green-700 leading-none">16</p>
+                        <p class="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Available Seats</p>
+                        <p class="text-2xl font-black text-green-700 leading-none">{{$vacancy}}</p>
                     </div>
                     <div class="text-right">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Immediate</p>
@@ -121,25 +118,40 @@
                     </div>
                 </div>
 
-                <form action="{{route('admin.navbar.report.summary')}}" method="POST" class="space-y-3">
-                    @csrf
+                <form action="#" method="GET" class="space-y-4">
                     <input type="hidden" name="type" value="vacancy">
-                    <div class="py-1 border-b border-gray-50">
-                        <label class="flex items-center space-x-2 cursor-pointer group">
-                            <input type="checkbox" name="download" value="1" class="w-4 h-4 text-green-600 border-gray-300 rounded-sm focus:ring-green-500">
-                            <span class="text-sm text-gray-600 group-hover:text-green-600 font-medium text-xs">Download Vacancy PDF</span>
-                        </label>
+                    
+                    <div class="space-y-2">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Select Room Type</p>
+                        <div class="flex items-center gap-4 bg-gray-50 p-2 rounded-sm border border-gray-100">
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="room_filter" value="all" checked class="w-3.5 h-3.5 text-green-600 border-gray-300 focus:ring-0">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase">All</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="room_filter" value="ac" class="w-3.5 h-3.5 text-green-600 border-gray-300 focus:ring-0">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase">AC</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="room_filter" value="non-ac" class="w-3.5 h-3.5 text-green-600 border-gray-300 focus:ring-0">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase">Non-AC</span>
+                            </label>
+                        </div>
                     </div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 rounded-sm transition flex items-center justify-center gap-2 uppercase tracking-tight">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        Get Vacant Rooms
-                    </button>
+
+                    <div class="flex items-center gap-3">
+                        <button type="submit" name="download" value="0" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-[11px] font-bold py-2 rounded-sm transition uppercase tracking-tight">
+                            Get Vacant Rooms
+                        </button>
+                        <button type="submit" name="download" value="1" class="px-3 border border-green-600 text-green-600 hover:bg-green-50 py-2 rounded-sm transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
-
     </div>
 </div>
 @endsection
