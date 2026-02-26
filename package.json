@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "concurrently \"php artisan serve --port=8001\" \"npm run dev:vite\"",
-        "remote": "concurrently \"php artisan serve --host=10.107.8.20  --port=8000\" \"npm run dev:vite\"",
+        "remote": "concurrently \"php artisan serve --host=10.107.8.20  --port=3000\" \"npm run dev:vite\"",
         "dev:vite": "vite"
     },
     "devDependencies": {

@@ -4,30 +4,41 @@
  * @created_at: 18/02/2026
  * @updated_at: 18/02/2026
  * */
-
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Exception;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void {
-       
-        User::factory()->create([
-            'name'     => 'Adal Khan',
-            'email'    => 'admin@biam',
-            'password' => 'biam1234'
-        ]);
-         $this->Call([
-            FeedbackSeeder::class,
-            SeatsSeeder::class
-        ]);
+    public function run(): void 
+    {
+        DB::beginTransaction();
+
+        try {
+            User::factory()->create([
+                'name'     => 'Adal Khan',
+                'email'    => 'admin@biam',
+                'password' => bcrypt('biam1234')
+            ]);
+
+            $this->call([
+                FeedbackSeeder::class,
+                RoomSeeder::class,
+                SeatsSeeder::class
+            ]);
+
+            DB::commit();
+            $this->command->info('Database seeded successfully!');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->command->error('Seeding failed: ' . $e->getMessage());
+        }
     }
 }

@@ -4,6 +4,8 @@
  * @created_at: 18/02/2026
  * @updated_at: 18/02/2026
  * */
+
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,16 +16,16 @@ return new class extends Migration
     {
         Schema::create('seats', function (Blueprint $table) {
             $table->id();
-            $table->string('room_no');
+            $table->foreignId('room_id')
+                  ->constrained()
+                  ->onDelete('cascade');
             $table->string('seat_no');
-            $table->enum('type', ['ac', 'non_ac']);
+            $table->enum('type', ['ac', 'normal','vip']);
             $table->decimal('rent', 10, 2);
-            $table->string('building_no');
             $table->enum('status', ['booked', 'available', 'unavailable'])->default('available');
-            $table->text('comment')->nullable();
             $table->timestamps();
 
-            $table->unique(['room_no', 'seat_no']);
+            $table->unique(['room_id', 'seat_no']);
         });
     }
 

@@ -21,7 +21,7 @@
                 @yield('message')
             </p>
 
-            <a href="{{ url('/') }}" 
+            <a href="{{ url('/admin/hostel') }}" 
                class="inline-block px-6 py-2 bg-indigo-600 text-white font-medium rounded-md no-underline hover:bg-indigo-700 transition-colors">
                 Return Home
             </a>

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\Room;
 
 class CAdminHostelCheckin extends Controller {
-    public function pinVerify() {
-        return "Working checking";
+    public function showCheckinForm(int $id): View {
+        $room = Room::with('seats')->findOrFail($id);
+        return view('checkin.checkin_form', compact('room'));
     }
 }

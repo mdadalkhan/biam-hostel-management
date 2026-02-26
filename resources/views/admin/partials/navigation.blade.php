@@ -7,8 +7,8 @@
     <div class="max-w-7xl grid grid-cols-5 md:flex md:justify-left">
         @include('admin.partials.nav-link', [
             'icon'   => 'home', 
-            'label'  => 'Home', 
-            'route'  => url('/'), 
+            'label'  => 'Summary', 
+            'route'  => url('/admin'), 
             'active' => request()->is('/')
         ])
 

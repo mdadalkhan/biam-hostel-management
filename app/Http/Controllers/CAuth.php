@@ -70,6 +70,6 @@ class CAuth extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect()->intended(route('welcome'));
+        return redirect()->intended(route('login'));
     }
 }
